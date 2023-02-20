@@ -35,9 +35,9 @@ def main(argv: list[str]):
     """
 Templaer - универсальный CLI шаблонизатор конфигурационных файлов, основанный на Jinja2.
 
-- GitHub - <https://github.com/denisxab/templaer>
-- Pip - <https://pypi.org/project/templaer/>
-- Habr - <https://habr.com/ru/post/717996/>
+* GitHub    = https://github.com/denisxab/templaer
+* Pip       = https://pypi.org/project/templaer/
+* Habr      = https://habr.com/ru/post/717996/
 
 Описание CLI:
 
