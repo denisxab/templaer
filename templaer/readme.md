@@ -4,6 +4,7 @@
 
 - GitHub - <https://github.com/denisxab/templaer>
 - Pip - <https://pypi.org/project/templaer/>
+- Habr - <https://habr.com/ru/post/717996/>
 
 ## Аналоги
 
