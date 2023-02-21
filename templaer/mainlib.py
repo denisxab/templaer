@@ -44,6 +44,8 @@ Templaer - универсальный CLI шаблонизатор конфиг�
 -c Путь_context.json                = Указать путь к файлу, из которого будут браться данными для шаблонов.
 -f Файл0 Файл1                      = Указать конкретные файлы, с расширением `.tpl`.
 -d ПутьДиректории0 ПутьДиректории1  = Указать путь к директории, в которой будут искаться все файлы с расширением `.tpl`.
+-e_                                 = Если указа этот флаг то также создастся `.env` файл, в туже папку где `context.json`
+
     """
 
     context: dict[str, str] = {}
@@ -56,12 +58,17 @@ Templaer - универсальный CLI шаблонизатор конфиг�
     ##
     if len(argv) == 1:
         log(main.__doc__)
+        return
     ###
     # Получаем данные для шаблона
     ##
+    path_to_context: pathlib.Path
+    context: dict | list = {}
     if path_to_context := cli_args.named_args.get('c'):
-        path_to_context = path_to_context[0]
-        context = json.loads(pathlib.Path(path_to_context).read_text())
+        path_to_context = pathlib.Path(path_to_context[0])
+        context = json.loads(path_to_context.read_text())
+    else:
+        raise KeyError("Не указан путь к `context.json`")
     ##
     # Собираем шаблоны для указанных файлов
     ##
@@ -82,3 +89,15 @@ Templaer - универсальный CLI шаблонизатор конфиг�
                 template_str: str = pathlib.Path(_files).resolve().read_text()
                 build_text: str = build_conf(template_str, context)
                 save_tpl_file(_files, build_text)
+    ###
+    # Если нужно, то создаем env файл
+    ##
+    if 'e' in cli_args.flags:
+        # Если контекст в типе словарь
+        if type(context) == dict:
+            # То конвертируем словарь в строку для .env файлов
+            write_text = [f'{k}={v}' for k, v in context.items()]
+            # Записываем в файл `.env` в туже папку где `context.json`
+            (path_to_context.parent / '.env').write_text(
+                '\n'.join(write_text)
+            )
