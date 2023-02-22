@@ -96,7 +96,12 @@ Templaer - универсальный CLI шаблонизатор конфиг�
         # Если контекст в типе словарь
         if type(context) == dict:
             # То конвертируем словарь в строку для .env файлов
-            write_text = [f'{k}={v}' for k, v in context.items()]
+            write_text=[]
+            for k, v in context.items():
+                if type(v) == str:
+                    write_text.append(f'{k}="{v}"')
+                else:
+                    write_text.append(f'{k}={v}')
             # Записываем в файл `.env` в туже папку где `context.json`
             (path_to_context.parent / '.env').write_text(
                 '\n'.join(write_text)
