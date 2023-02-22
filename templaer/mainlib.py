@@ -108,8 +108,8 @@ Templaer - универсальный CLI шаблонизатор конфиг�
                     write_text.append(f'{k}="{v}"')
                 else:
                     write_text.append(f'{k}={v}')
-            for _path in use_paths_dirs:
-                # Записываем в файл `.env` в туже папку где `context.json`
-                (_path / '.env').write_text(
-                    '\n'.join(write_text)
-                )
+            # for _path in use_paths_dirs:
+            # Записываем в файл `.env` в туже папку где `context.json`
+            (path_to_context.parent / '.env').write_text(
+                '\n'.join(write_text)
+            )
