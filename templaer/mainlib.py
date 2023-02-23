@@ -1,3 +1,4 @@
+import filecmp
 import os
 import re
 import json
@@ -58,7 +59,8 @@ def main(argv: list[str]):
 {y}-to{r} Директория              = {g}[?]{r} Указать путь куда собрать шаблонный проект.
 
 {c}Flags{r}:
-{y}-e_{r}                         = {g}[?]{r} Если указа этот флаг то также создастся {u}.env{r} файл, в те же папки где файл {u}context.json{r}
+{y}-e_{r}                         = {g}[?]{r} Если указа этот флаг то также создастся {u}.env{r} файл, в те же папки где файл {u}context.json{r}.
+{y}-y_{r}                         = {g}[?]{r} Ответить на все вопросы {u}yes{r}.
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     """
 
@@ -67,6 +69,8 @@ def main(argv: list[str]):
         argv[0],
         argv[1:],
     )
+    # Путь к файлу `context.json`
+    path_to_context: pathlib.Path
     # Список директорий в которых есть шаблонные файлы
     use_paths_dirs = set()
     ##
@@ -85,27 +89,32 @@ def main(argv: list[str]):
     ###
     # Получаем данные для шаблона
     ##
-    path_to_context: pathlib.Path
     context: dict | list = {}
     if path_to_context := cli_args.named_args.get('c'):
         path_to_context = pathlib.Path(path_to_context[0])
         context = json.loads(path_to_context.read_text())
     else:
         raise KeyError("Не указан путь к `context.json`")
-
-    def a1(_files: str):
-        template_str: str = pathlib.Path(_files).resolve().read_text()
-        build_text: str = build_conf(template_str, context)
-        save_tpl_file(_files, build_text)
-        # Добавить папку в используемые
-        use_paths_dirs.add(pathlib.Path(_files).parent.resolve())
     ##
     # Собираем шаблоны для указанных файлов
     ##
+
+    def _build_tpl(_files: str):
+        # Шаблонный файл должке оканчиваться на `.tpl`
+        if re.search('\.tpl\Z', str(_files)):
+            # Получаем текст шаблона
+            template_str: str = pathlib.Path(_files).resolve().read_text()
+            # Собираем текст на основе контекста
+            build_text: str = build_conf(template_str, context)
+            # Сохраняем собранный текст в файл
+            save_tpl_file(_files, build_text)
+            # Добавить папку в используемые
+            use_paths_dirs.add(pathlib.Path(_files).parent.resolve())
+
     if path_to_templates := cli_args.named_args.get('f'):
         # Перебираем файлы
         for _files in path_to_templates:
-            a1(_files)
+            _build_tpl(_files)
     ##
     # Находим файлы которые оканчиваются на `.tpl`, в указанной директории. И собираем шаблон
     ##
@@ -140,22 +149,48 @@ def main(argv: list[str]):
     ###
     # Работа с шаблонным проектом
     ###
+
+    def _skip(_file):
+        log('{c}Skip{r}:\t{f}'.format(
+            c=color.сyan.value, r=color.reset.value, f=_file
+        ))
     if path_in_template := cli_args.named_args.get('ti'):
         path_in_template = pathlib.Path(path_in_template[0]).resolve()
         # Если есть `-ti` то должен быть и `-to`
         if path_out_template := cli_args.named_args.get('to'):
             path_out_template = pathlib.Path(path_out_template[0]).resolve()
-            # Перебираем файл в шаблонном проекте.
+            # Перебираем файлы в шаблонном проекте.
             for _files in files_from_path(path_in_template):
-                # Создаем полное имя файла, для нового проекта.
+                # Полное имя файла, для нового проекта.
                 write_name_file = pathlib.Path(_files.replace(
                     str(path_in_template), str(path_out_template)
                 ))
                 # Создаем путь из папок, для нового проекта.
                 os.makedirs(write_name_file.parent, exist_ok=True)
+                # Если не перед флаг `-y_`, то проверяем содержания файлов в шаблоне, и в новом проекте.
+                if 'y' not in cli_args.flags:
+                    # 1: Если файл уже существует
+                    if write_name_file.exists():
+                        # 2: и его содержание отличается от шаблона
+                        if not filecmp.cmp(_files, write_name_file):
+                            # 3: то запрашиваем подтверждение на перезапись файла
+                            res_is_replace = input(
+                                f"{color.read.value}Файл уже существует и отличается от шаблона, перезаписать его ?{color.reset.value}: {write_name_file}\n[y|N]>>>"
+                            )
+                            # Если ответ не положительный то пропускам файл
+                            if res_is_replace != 'y':
+                                _skip(write_name_file)
+                                continue
+                        # Если файл уже существует, и его содержание равно шаблону, то пропускаем его
+                        else:
+                            _skip(write_name_file)
+                            continue
                 # Копируем файл из шаблона в новый проект.
                 shutil.copy(_files, write_name_file.parent)
+                log("{y}Copy{r}:\t{f}".format(
+                    y=color.yellow.value, r=color.reset.value, f=write_name_file
+                ))
                 # Собираем файл уже в новом проекте.
-                a1(write_name_file)
+                _build_tpl(write_name_file)
         else:
             raise KeyError('Не передан ключ -to')
