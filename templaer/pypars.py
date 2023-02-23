@@ -104,7 +104,7 @@ def parse_args(in_path: str, argv: list[str]):
     return TArgs(in_path=in_path, flags=flags, named_args=named_args, position_args=position_args)
 
 
-def files_from_path(path: str | pathlib.Path, regex: str):
+def files_from_path(path: str | pathlib.Path, regex: str | None = None):
     """
     Получить всей файлы в указанной директории с учетом вложенности
 
@@ -114,10 +114,11 @@ def files_from_path(path: str | pathlib.Path, regex: str):
     # Проходим рекурсивно по всем поддиректориям и файлам внутри них
     for dirpath, dirnames, filenames in os.walk(path):
         for filename in filenames:
-            # Проверяем на соответствие указному шаблону
-            if re.search(regex, filename):
-                # Получаем полный путь к файлу
-                yield os.path.join(dirpath, filename)
+            # Проверяем на соответствие указному шаблону, если нет то пропускам путь.
+            if regex and not re.search(regex, filename):
+                continue
+            # Получаем полный путь к файлу.
+            yield os.path.join(dirpath, filename)
 
 
 # Сразу выполняем парсинг командной строки при импорте модуля

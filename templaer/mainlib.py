@@ -1,6 +1,8 @@
+import os
 import re
 import json
 import pathlib
+import shutil
 from jinja2 import Template
 from .pypars import files_from_path, parse_args, TArgs
 from .helper import color, log
@@ -24,28 +26,40 @@ def save_tpl_file(in_file: str, write_text: str):
     :param in_file: Исходный файл с окончанием на `.tpl`
     :param write_text: Собранный шаблонный текст
     """
+    in_file = str(in_file)
     # Обрезать `.tpl` с конца имени файла
     path_save = re.sub('\.tpl\Z', '', in_file)
-    # Сохранить текст в новый файл
-    pathlib.Path(path_save).write_text(write_text)
-    log(f'{color.green.value}Build:{color.reset.value}\t{path_save}')
+    if in_file != path_save:
+        # Сохранить текст в новый файл
+        pathlib.Path(path_save).write_text(write_text)
+        log(f'{color.green.value}Build:{color.reset.value}\t{path_save}')
 
 
 def main(argv: list[str]):
     """
-Templaer - универсальный CLI шаблонизатор конфигурационных файлов, основанный на Jinja2.
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+{y}Templaer{r} - универсальный CLI шаблонизатор конфигурационных файлов, основанный на {u}Jinja2{r}.
 
-* GitHub    = https://github.com/denisxab/templaer
-* Pip       = https://pypi.org/project/templaer/
-* Habr      = https://habr.com/ru/post/717996/
+{g}* GitHub{r} = https://github.com/denisxab/templaer
+{g}* Pip{r}    = https://pypi.org/project/templaer/
+{g}* Habr{r}   = https://habr.com/ru/post/717996/
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+{c}Описание CLI{r}: 
+{d}[!]{r} - Обязательный для передачи
+{g}[?]{r} - Опциональный для передачи
 
-Описание CLI:
+{c}Kwargs{r}:
+{y}-c{r} context.json             = {d}[!]{r} Указать путь к файлу({u}context.json{r}), из которого будут браться данными для шаблонов.
+{f}> Шаблонные файлы{r}
+{y}-f{r} Файл0 Файл1              = {g}[?]{r} Указать конкретные файлы, с расширением {u}.tpl{r}.
+{y}-d{r} Директория0 Директория1  = {g}[?]{r} Указать путь к директории, в которой будут искаться все файлы с расширением {u}.tpl{r}.
+{f}> Шаблонный проект{r}
+{y}-ti{r} Директория              = {g}[?]{r} Указать путь к папке с шаблоном проекта.
+{y}-to{r} Директория              = {g}[?]{r} Указать путь куда собрать шаблонный проект.
 
--c Путь_context.json                = Указать путь к файлу, из которого будут браться данными для шаблонов.
--f Файл0 Файл1                      = Указать конкретные файлы, с расширением `.tpl`.
--d ПутьДиректории0 ПутьДиректории1  = Указать путь к директории, в которой будут искаться все файлы с расширением `.tpl`.
--e_                                 = Если указа этот флаг то также создастся `.env` файл, в те же папки где есть файлы `.tpl`
-
+{c}Flags{r}:
+{y}-e_{r}                         = {g}[?]{r} Если указа этот флаг то также создастся {u}.env{r} файл, в те же папки где файл {u}context.json{r}
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     """
 
     context: dict[str, str] = {}
@@ -59,7 +73,14 @@ Templaer - универсальный CLI шаблонизатор конфиг�
     # Ели не переданы ни каких данных то выводим документацию по CLI
     ##
     if len(argv) == 1:
-        log(main.__doc__)
+        log(main.__doc__.format(
+            r=color.reset.value,
+            g=color.green.value,
+            y=color.yellow.value,
+            c=color.сyan.value,
+            d=color.read.value,
+            f=color.fil.value, u='\033[1m'
+        )[1:])
         return
     ###
     # Получаем данные для шаблона
@@ -71,17 +92,20 @@ Templaer - универсальный CLI шаблонизатор конфиг�
         context = json.loads(path_to_context.read_text())
     else:
         raise KeyError("Не указан путь к `context.json`")
+
+    def a1(_files: str):
+        template_str: str = pathlib.Path(_files).resolve().read_text()
+        build_text: str = build_conf(template_str, context)
+        save_tpl_file(_files, build_text)
+        # Добавить папку в используемые
+        use_paths_dirs.add(pathlib.Path(_files).parent.resolve())
     ##
     # Собираем шаблоны для указанных файлов
     ##
     if path_to_templates := cli_args.named_args.get('f'):
         # Перебираем файлы
         for _files in path_to_templates:
-            template_str: str = pathlib.Path(_files).resolve().read_text()
-            build_text: str = build_conf(template_str, context)
-            save_tpl_file(_files, build_text)
-            # Добавить папку в используемые
-            use_paths_dirs.add(pathlib.Path(_files).parent.resolve())
+            a1(_files)
     ##
     # Находим файлы которые оканчиваются на `.tpl`, в указанной директории. И собираем шаблон
     ##
@@ -113,3 +137,25 @@ Templaer - универсальный CLI шаблонизатор конфиг�
             (path_to_context.parent / '.env').write_text(
                 '\n'.join(write_text)
             )
+    ###
+    # Работа с шаблонным проектом
+    ###
+    if path_in_template := cli_args.named_args.get('ti'):
+        path_in_template = pathlib.Path(path_in_template[0]).resolve()
+        # Если есть `-ti` то должен быть и `-to`
+        if path_out_template := cli_args.named_args.get('to'):
+            path_out_template = pathlib.Path(path_out_template[0]).resolve()
+            # Перебираем файл в шаблонном проекте.
+            for _files in files_from_path(path_in_template):
+                # Создаем полное имя файла, для нового проекта.
+                write_name_file = pathlib.Path(_files.replace(
+                    str(path_in_template), str(path_out_template)
+                ))
+                # Создаем путь из папок, для нового проекта.
+                os.makedirs(write_name_file.parent, exist_ok=True)
+                # Копируем файл из шаблона в новый проект.
+                shutil.copy(_files, write_name_file.parent)
+                # Собираем файл уже в новом проекте.
+                a1(write_name_file)
+        else:
+            raise KeyError('Не передан ключ -to')

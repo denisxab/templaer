@@ -7,6 +7,8 @@ class color(enum.Enum):
     green = '\x1b[92m'
     yellow = '\x1b[93m'
     read = '\x1b[31m'
+    сyan= '\x1b[36m'
+    fil = '\033[35m'
     # Рамка
     frame = '\x1b[51m'
 
