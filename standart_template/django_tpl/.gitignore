@@ -1,0 +1,7 @@
+venv
+dist
+__pycache__
+*.sqlite3
+static
+conf_docke_*
+pgdata
