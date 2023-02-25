@@ -181,9 +181,9 @@ MEDIA_URL = '/media/'  # Добавляет к файлам префикс
 if DEBUG:
     ###
     # django-debug-toolbar
-    INSTALLED_APPS.append('debug_toolbar')
-    INTERNAL_IPS = ['127.0.0.1']
-    MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
+    # INSTALLED_APPS.append('debug_toolbar')
+    # INTERNAL_IPS = ['127.0.0.1']
+    # MIDDLEWARE.append('debug_toolbar.middleware.DebugToolbarMiddleware')
 
     # django-livereload-server
     # INSTALLED_APPS.append('livereload')

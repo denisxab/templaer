@@ -6,7 +6,7 @@ import pathlib
 import shutil
 from jinja2 import Template
 from .pypars import files_from_path, parse_args, TArgs
-from .helper import color, log
+from .helper import color, jsonc_to_json, log
 
 
 def build_conf(template_str: str, context: dict[str, str]) -> str:
@@ -50,7 +50,7 @@ def main(argv: list[str]):
 {g}[?]{r} - Опциональный для передачи
 
 {c}Kwargs{r}:
-{y}-c{r} context.json             = {d}[!]{r} Указать путь к файлу({u}context.json{r}), из которого будут браться данными для шаблонов.
+{y}-c{r} context.jsonc             = {d}[!]{r} Указать путь к файлу({u}context.jsonc{r}), из которого будут браться данными для шаблонов.
 {f}> Шаблонные файлы{r}
 {y}-f{r} Файл0 Файл1              = {g}[?]{r} Указать конкретные файлы, с расширением {u}.tpl{r}.
 {y}-d{r} Директория0 Директория1  = {g}[?]{r} Указать путь к директории, в которой будут искаться все файлы с расширением {u}.tpl{r}.
@@ -59,7 +59,7 @@ def main(argv: list[str]):
 {y}-to{r} Директория              = {g}[?]{r} Указать путь куда собрать шаблонный проект.
 
 {c}Flags{r}:
-{y}-e_{r}                         = {g}[?]{r} Если указа этот флаг то также создастся {u}.env{r} файл, в те же папки где файл {u}context.json{r}.
+{y}-e_{r}                         = {g}[?]{r} Если указа этот флаг то также создастся {u}.env{r} файл, в те же папки где файл {u}context.jsonc{r}.
 {y}-y_{r}                         = {g}[?]{r} Ответить на все вопросы {u}yes{r}.
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     """
@@ -69,7 +69,7 @@ def main(argv: list[str]):
         argv[0],
         argv[1:],
     )
-    # Путь к файлу `context.json`
+    # Путь к файлу `context.jsonc`
     path_to_context: pathlib.Path
     # Список директорий в которых есть шаблонные файлы
     use_paths_dirs = set()
@@ -92,9 +92,9 @@ def main(argv: list[str]):
     context: dict | list = {}
     if path_to_context := cli_args.named_args.get('c'):
         path_to_context = pathlib.Path(path_to_context[0])
-        context = json.loads(path_to_context.read_text())
+        context = jsonc_to_json(path_to_context.read_text())
     else:
-        raise KeyError("Не указан путь к `context.json`")
+        raise KeyError("Не указан путь к `context.jsonc`")
     ##
     # Собираем шаблоны для указанных файлов
     ##
@@ -142,7 +142,7 @@ def main(argv: list[str]):
                 else:
                     write_text.append(f'{k}={v}')
             # for _path in use_paths_dirs:
-            # Записываем в файл `.env` в туже папку где `context.json`
+            # Записываем в файл `.env` в туже папку где `context.jsonc`
             (path_to_context.parent / '.env').write_text(
                 '\n'.join(write_text)
             )
