@@ -6,7 +6,8 @@
 - Pip - <https://pypi.org/project/templaer/>
 - Habr - <https://habr.com/ru/post/717996/>
 
-![Основное фото](main.png)
+![](./templaer/main.png)
+![](main.png)
 
 ## Аналоги
 
