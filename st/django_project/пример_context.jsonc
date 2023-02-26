@@ -12,7 +12,7 @@
     // Порт Django в контейнере
     "DJANGO_PORT": 8000,
     // Имя папки(проекта) с Django
-    "DJANGO_PROJ_NAME": "django_proj",
+    "DJANGO_PROJ_NAME": "django",
     // Секретный ключ для Django
     "DJANGO_SECRET_KEY": "djang///o-insecure-7=d(8v$8j!#zwb!o@ck)z%9ohqk2sm1udv1_qo78zwk9q52cbb",
     ////

@@ -205,14 +205,20 @@ python -m templaer -c context.jsonc -ti ШаблонПроекта -to Папк�
 1. Собрать проект:
 
     ```bash
-    templaer -e                              \
-        -c  ./st/django/пример_context.jsonc \
-        -ti ./st/django                      \
+    templaer -e_                                     \
+        -c  ./st/django_project/пример_context.jsonc \
+        -ti ./st/django_project                      \
         -to ПапкаКудаСобрать                  
     ```
 
 2. Запустить контейнеры, через `docker-compose`:
 
     ```bash
-    docker-compose up
+    docker-compose build && docker-compose up
+    ```
+
+3. Создать и применить миграции в БД, и собрать статические файлы:
+
+    ```bash
+    make docker_init_django
     ```

@@ -5,6 +5,8 @@ FROM python:3.11-alpine
 WORKDIR /code
 # Копируем Django проект
 COPY . /code/
+# Установка утилиты `make`d
+RUN apk add make 
 # Установка зависемостей для Python
 RUN pip install --upgrade pip && pip install -r requirements.txt
 # Войти в диреткорию с проектом
