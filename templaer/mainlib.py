@@ -94,7 +94,7 @@ def main(argv: list[str]):
         path_to_context = pathlib.Path(path_to_context[0])
         context = jsonc_to_json(path_to_context.read_text())
     else:
-        raise KeyError("Не указан путь к `context.jsonc`")
+        print("Не указан путь к `context.jsonc`")
     ##
     # Собираем шаблоны для указанных файлов
     ##
