@@ -198,9 +198,9 @@ python -m templaer -c context.jsonc -ti ШаблонПроекта -to Папк�
     }
     ```
 
-## Готовые шаблоны проектов
+# Готовые шаблоны проектов
 
-### Django REST + PostgreSQL + Nginx + Docker
+## Django REST + PostgreSQL + Nginx + Docker
 
 1. Собрать проект для `Django`:
 
