@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "templaer"
-version = "0.1.5"
+version = "0.1.6"
 description = ""
 authors = ["Denis <pro-progerkustov@yandex.ru>"]
 readme = "readme.md"
