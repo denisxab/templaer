@@ -1,14 +1,17 @@
 [tool.poetry]
 name = "templaer"
-version = "0.1.6"
-description = ""
+version = "0.1.6.2"
+description = "Templaer - универсальный CLI шаблонизатор конфигурационных файлов, основанный на Jinja2"
 authors = ["Denis <pro-progerkustov@yandex.ru>"]
-readme = "readme.md"
+license = "Apache-2.0"
+homepage = "https://github.com/denisxab/templaer"
+repository = "https://github.com/denisxab/templaer"
+readme = "./templaer/readme.md"
+keywords = ["template","jinja2"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 jinja2 = "^3.1.2"
-
 
 [build-system]
 requires = ["poetry-core"]
