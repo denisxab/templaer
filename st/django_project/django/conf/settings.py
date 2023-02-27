@@ -12,34 +12,17 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from pathlib import Path
-import pprint
-import re
+
+
+from helper_dj import read_env_file_and_set_from_venv
 
 ###
 # Путь к Django проекту
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Путь к корню проекта
 ROOT_DIR = BASE_DIR.parent
-
-
-def read_env_file_and_set_from_venv(file_name: str):
-    """Чтение переменных окружения из указанного файла, и добавление их в ПО `python`"""
-    with open(file_name, 'r', encoding='utf-8') as _file:
-        res = {}
-        for line in _file:
-            tmp = re.sub(r'^#[\s\w\d\W\t]*|[\t\s]', '', line)
-            if tmp:
-                k, v = tmp.split('=', 1)
-                # Если значение заключено в двойные кавычки, то нужно эти кавычки убрать
-                if v.startswith('"') and v.endswith('"'):
-                    v = v[1:-1]
-                res[k] = v
-    os.environ.update(res)
-    pprint.pprint(res)
-
-
+# Читаем файл с переменными окружения и заносим их в `os.environ`
 read_env_file_and_set_from_venv(BASE_DIR / ".env")
-
 ###
 # Секретный ключ приложения
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
@@ -63,7 +46,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "api"
+    'rest_framework',
+    # Приложения
+    'api.apps.ApiConfig'
 ]
 # Список используемых плагинов.
 MIDDLEWARE = [
@@ -102,6 +87,7 @@ TEMPLATES = [
 # которые будут использоваться с Джанго.
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 DATABASES = {
+    # PostgreSql
     'default': {
         # Адаптер
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -112,10 +98,18 @@ DATABASES = {
         # Пароль от пользователя
         'PASSWORD': os.environ['POSTGRES_PASSWORD'],
         # Хост, имя контейнера.
-        'HOST': os.environ.get('POSTGRES_HOST', default='localhost'),
+        'HOST': os.environ.get(
+            'POSTGRES_HOST',
+            os.environ.get('POSTGRES_HOST_DEFAULT', 'localhost')
+        ),
         # Порт для подключения к БД.
-        'PORT': os.environ.get('POSTGRES_PORT', default=5432),
+        'PORT': os.environ.get('POSTGRES_PORT', 5432),
     }
+    # SQLite
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 # Автоматически добавлять поле primary_key к БД
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

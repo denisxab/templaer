@@ -14,10 +14,13 @@ services:
       - nginx
 
   db_postgres:
-    # Берем образ postgres 
+    # Берем образ PostgreSql 
     image: postgres:alpine
     volumes:
       - ./pgdata/:/var/lib/postgresql/data/
+    # Проброс портов для PostgreSql
+    ports:
+      - ${POSTGRESQL_REAL_PORT}:${POSTGRESQL_CONTAINER_PORT}
     # Настройки для PostgreSql
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -25,9 +28,9 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
 
   nginx:
-    # Берем образ nginx 
+    # Берем образ Nginx 
     image: "nginx:alpine"
-    # Проброс портов
+    # Проброс портов Nginx
     ports:
       - ${REAL_ENDPOINT_PORT}:${NGINX_PORT}
     volumes:

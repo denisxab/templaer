@@ -17,6 +17,9 @@
     "DJANGO_SECRET_KEY": "djang///o-insecure-7=d(8v$8j!#zwb!o@ck)z%9ohqk2sm1udv1_qo78zwk9q52cbb",
     ////
     // PostgreSQL
+    // Проброс портов в БД
+    "POSTGRESQL_REAL_PORT": 8082,
+    "POSTGRESQL_CONTAINER_PORT": 5432,
     // Имя пользователя
     "POSTGRES_USER": "hello_django",
     // Пароль от пользователя
