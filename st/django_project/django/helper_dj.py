@@ -5,8 +5,14 @@ import re
 import subprocess
 # from asyncio import create_subprocess_shell
 from pathlib import Path
+from typing import Any
 from django.db.backends.utils import CursorWrapper
 from django.db import connection
+
+
+"""
+setting.py
+"""
 
 
 def read_env_file_and_set_from_venv(file_name: str):
@@ -84,6 +90,11 @@ def default_host_postgresql_from_docker_compose() -> str:
     return _subprocess_run(command).replace('"', '')
 
 
+"""
+SQL
+"""
+
+
 def get_db_cursor(fun):
     """
     Вернуть курсор для выполнения Raw SQL команд
@@ -92,8 +103,8 @@ def get_db_cursor(fun):
 
     ```
     from rest_framework.views import APIView
-    
-    
+
+
     class ИмяКласса(APIView):
         @get_db_cursor
         def get(self, request: Request, cursor: CursorWrapper):
@@ -109,3 +120,12 @@ def get_db_cursor(fun):
             res = fun(*arg, **kwargs)
         return res
     return wrapper
+
+
+def dictfetchall(cursor: CursorWrapper) -> list[dict[str, Any]]:
+    "Вернуть результат в виде dist"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]

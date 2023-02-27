@@ -170,6 +170,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'  # Добавляет к файлам префикс
 #####
 
+###
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ]
+}
 
 # Для отладки
 if DEBUG:
@@ -183,6 +193,12 @@ if DEBUG:
     # INSTALLED_APPS.append('livereload')
     # MIDDLEWARE.append('livereload.middleware.LiveReloadScript')
 
+    ###
+    # DRF
+    # В режиме отладки добавляем возможность редактировать Api через браузер
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
+        'rest_framework.renderers.BrowsableAPIRenderer'
+    )
     ###
     # Отключить кеширование при отладке
     CACHES = {
