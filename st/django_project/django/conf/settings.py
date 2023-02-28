@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
-
 from helper_dj import read_env_file_and_set_from_venv
 
 ###
@@ -25,40 +24,40 @@ ROOT_DIR = BASE_DIR.parent
 read_env_file_and_set_from_venv(BASE_DIR / ".env")
 ###
 # Секретный ключ приложения
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 # Если `True` будет отображать отладочную информацию
-DEBUG = os.environ.get('DEBUG', True)
+DEBUG = os.environ.get("DEBUG", True)
 # Список хостов который будет обслуживать Django
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 # Главный `URL` обработчик
-ROOT_URLCONF = 'conf.urls'
+ROOT_URLCONF = "conf.urls"
 # Обработка ASGI
-ASGI_APPLICATION = 'conf.asgi.application'
+ASGI_APPLICATION = "conf.asgi.application"
 # Обработка WSGI
-WSGI_APPLICATION = 'conf.wsgi.application'
+WSGI_APPLICATION = "conf.wsgi.application"
 
 ###
 # Все инсталлированные приложения на вашем сайте.
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
     # Приложения
-    'api.apps.ApiConfig'
+    "api.apps.ApiConfig",
 ]
 # Список используемых плагинов.
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ###
@@ -67,15 +66,15 @@ MIDDLEWARE = [
 # представляет собой словарь, содержащий параметры для индивидуального двигатель
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -88,22 +87,19 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 DATABASES = {
     # PostgreSql
-    'default': {
+    "default": {
         # Адаптер
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
         # Имя Бд
-        'NAME': os.environ['POSTGRES_DB'],
+        "NAME": os.environ["POSTGRES_DB"],
         # Имя пользователя
-        'USER': os.environ['POSTGRES_USER'],
+        "USER": os.environ["POSTGRES_USER"],
         # Пароль от пользователя
-        'PASSWORD': os.environ['POSTGRES_PASSWORD'],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
         # Хост, имя контейнера.
-        'HOST': os.environ.get(
-            'POSTGRES_HOST',
-            os.environ.get('POSTGRES_HOST_DEFAULT', 'localhost')
-        ),
+        "HOST": os.environ.get("POSTGRES_HOST", os.environ.get("POSTGRES_HOST_DEFAULT", "localhost")),
         # Порт для подключения к БД.
-        'PORT': os.environ.get('POSTGRES_PORT', 5432),
+        "PORT": os.environ.get("POSTGRES_PORT", 5432),
     }
     # SQLite
     # 'default': {
@@ -112,14 +108,14 @@ DATABASES = {
     # }
 }
 # Автоматически добавлять поле primary_key к БД
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 ###
 # Кеширование данных в файловой системе
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, '__cache')
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "__cache"),
     }
 }
 
@@ -130,16 +126,16 @@ CACHES = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -147,10 +143,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # Локализация
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
-LANGUAGE_CODE = 'ru'  # Язык сервера
+LANGUAGE_CODE = "ru"  # Язык сервера
 # Логическое значение, указывающее, должна ли быть включена система перевода Django.
 USE_I18N = True
-TIME_ZONE = 'Europe/Moscow'  # Часовой пояс
+TIME_ZONE = "Europe/Moscow"  # Часовой пояс
 USE_L10N = True  # Логическое значение, указывающее, будет ли включено локализованное форматирование данны
 USE_TZ = True  # Логическое значение, указывающее, будут ли даты по умолчанию учитывать часовой пояс
 
@@ -158,7 +154,7 @@ USE_TZ = True  # Логическое значение, указывающее, 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 # URL-адрес для использования при обращении к статическим файлам, расположенным в STATIC_ROOT.
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 # Путь к общей статической папки.
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATICFILES_DIRS = [  # Список нестандартных путей используемых для сборки.
@@ -166,19 +162,19 @@ STATICFILES_DIRS = [  # Список нестандартных путей ис�
 ]
 # Пути для изображений
 # Имя папки в корневом каталоге, для изображений
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'  # Добавляет к файлам префикс
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"  # Добавляет к файлам префикс
 #####
 
 ###
 # DRF
 REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
     ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-    ]
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ],
 }
 
 # Для отладки
@@ -196,13 +192,11 @@ if DEBUG:
     ###
     # DRF
     # В режиме отладки добавляем возможность редактировать Api через браузер
-    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
-        'rest_framework.renderers.BrowsableAPIRenderer'
-    )
+    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"].append("rest_framework.renderers.BrowsableAPIRenderer")
     ###
     # Отключить кеширование при отладке
     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         }
     }

@@ -18,5 +18,5 @@ from django.urls import path
 from .views import index_main
 
 urlpatterns = [
-    path('home/', index_main),
+    path("home/", index_main),
 ]

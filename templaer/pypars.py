@@ -1,10 +1,10 @@
 import os
+import pathlib
 import re
 import sys
 import typing
-import pathlib
 
-""" 
+"""
 Шаблон командной строки:
 
 Позиционный1 Позиционный2 -Флаг2_ -Флаг2_ -Именованный1 Значение1 Значение2 -Именованный1 Значение1 Значение2
@@ -31,7 +31,7 @@ def toBash(argv: list[str] | None = None) -> str:
     Простой пример:
     >>> ~py Путь.py "КоманднаяСтрокаДляПарсинга"
     Большой пример:
-    >>> ~py py/pypars.py "-rsync-delete-server-folder ./firebird_book1 root@5.63.154.238:/home/ubuntu/test 80 -ess md ms  -p 1010 asd a22 -d_ -W_ -dfc_" 
+    >>> ~py py/pypars.py "-rsync-delete-server-folder ./firebird_book1 root@5.63.154.238:/home/ubuntu/test 80 -ess md ms  -p 1010 asd a22 -d_ -W_ -dfc_"
     """
     if argv is None:
         argv = sys.argv
@@ -45,25 +45,17 @@ def toBash(argv: list[str] | None = None) -> str:
     # Формируем флаги
     #
     if targs.flags:
-        res_command.append("local _f=({f})".format(
-            f=' '.join(
-                [f'"{x}"' for x in targs.flags]
-            ))
-        )
+        res_command.append("local _f=({f})".format(f=" ".join([f'"{x}"' for x in targs.flags])))
     #
     # Формируем позиционные аргументы
     #
-    res_command.append("local _p=({f})".format(f=' '.join(
-        [f'"{x}"' for x in targs.position_args]
-    )))
+    res_command.append("local _p=({f})".format(f=" ".join([f'"{x}"' for x in targs.position_args])))
     #
     # Формируем именованные аргументы
     #
     for k, v in targs.named_args.items():
-        res_command.append("local {k}=({f})".format(
-            k=k, f=' '.join([f'"{x}"' for x in v]))
-        )
-    return ';\n'.join(res_command)+';'
+        res_command.append("local {k}=({f})".format(k=k, f=" ".join([f'"{x}"' for x in v])))
+    return ";\n".join(res_command) + ";"
 
 
 def parse_args(in_path: str, argv: list[str]):
@@ -72,7 +64,7 @@ def parse_args(in_path: str, argv: list[str]):
     #
     flags = []
     for i, x in enumerate(argv):
-        if (r := re.search("-([\w\d]+)_", x)):
+        if r := re.search("-([\\w\\d]+)_", x):
             flags.append(r.group(1))
             argv[i] = None
     #
@@ -84,7 +76,7 @@ def parse_args(in_path: str, argv: list[str]):
         if not x:
             continue
         # Берем название ключа
-        if (r := re.search("\A-([\w\d]+)(?!_)\Z", x)):
+        if r := re.search("\\A-([\\w\\d]+)(?!_)\\Z", x):
             last_key = r.group(1)
             named_args[last_key] = []
             argv[i] = None
@@ -108,7 +100,7 @@ def files_from_path(path: str | pathlib.Path, regex: str | None = None):
     """
     Получить всей файлы в указанной директории с учетом вложенности
 
-    path: Путь к папке 
+    path: Путь к папке
     """
 
     # Проходим рекурсивно по всем поддиректориям и файлам внутри них

@@ -15,9 +15,9 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import index_main, ApiView
+from .views import ApiView, index_main
 
 urlpatterns = [
-    path('index/', index_main),
+    path("index/", index_main),
     path("drf/", ApiView.as_view()),
 ]

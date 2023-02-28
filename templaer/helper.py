@@ -4,15 +4,15 @@ import re
 
 
 class color(enum.Enum):
-    reset = '\x1b[0m'
+    reset = "\x1b[0m"
     #################
-    green = '\x1b[92m'
-    yellow = '\x1b[93m'
-    read = '\x1b[31m'
-    сyan = '\x1b[36m'
-    fil = '\033[35m'
+    green = "\x1b[92m"
+    yellow = "\x1b[93m"
+    read = "\x1b[31m"
+    сyan = "\x1b[36m"
+    fil = "\033[35m"
     # Рамка
-    frame = '\x1b[51m'
+    frame = "\x1b[51m"
 
 
 def log(text: str):
@@ -25,6 +25,6 @@ def jsonc_to_json(jsonc_text: str) -> object:
     """
     # Убираем комментарии из Jsonc
     json_text = re.sub(
-        '(?P<one_line>[\t ]+\/+[^\n]{2,})|(?P<mlt_line>\/\*(?:.?\s*(?!\*?\/))*[\w\W]?\*\/)', '', jsonc_text
+        "(?P<one_line>[\t ]+\\/+[^\n]{2,})|(?P<mlt_line>\\/\\*(?:.?\\s*(?!\\*?\\/))*[\\w\\W]?\\*\\/)", "", jsonc_text
     )
     return json.loads(json_text)
