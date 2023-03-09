@@ -5,3 +5,6 @@ __pycache__
 static
 conf_docke_*
 pgdata
+*.pyc
+/.idea
+.vscode

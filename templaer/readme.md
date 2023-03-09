@@ -214,7 +214,23 @@ python -m templaer -c context.jsonc -ti ШаблонПроекта -to Папк�
         -to ПапкаКудаСобрать                  
     ```
 
-## Django DRF + PostgreSQL + Nginx + Docker
+## Django
+
+### Стандартный шаблон DRF приложения
+
+1. Собрать приложение для `Django`:
+
+    ```bash
+    templaer                    \
+        -ti ./st/django_app     \
+        -to ПапкаКудаСобрать                  
+    ```
+
+### Django DRF
+
+#### Project
+
+##### PostgreSQL + Nginx + Docker
 
 1. Собрать проект для `Django`:
 
@@ -237,12 +253,16 @@ python -m templaer -c context.jsonc -ti ШаблонПроекта -to Папк�
     make docker_init_django
     ```
 
----
+#### App
 
-1. Собрать приложение для `Django`:
+##### Приложение на основе Swagger.yaml
+
+TODO: Написать такой шаблон
+
+1. Собрать приложение для `Django` на основе `swagger.yaml`:
 
     ```bash
-    templaer                    \
-        -ti ./st/django_app     \
+    templaer                            \
+        -ti ./st/dajngo_app_swagger     \
         -to ПапкаКудаСобрать                  
     ```

@@ -3,3 +3,4 @@ dist
 *.conf
 __pycache__
 test
+s/
